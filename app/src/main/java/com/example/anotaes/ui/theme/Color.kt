@@ -21,3 +21,6 @@ val yellow_select = Color(0xFFFFEB3B)
 val yellow_unselect = Color(0xFFFFC107)
 val red_select = Color(0xFFFF1100)
 val red_unselect = Color(0xFFFF1100)
+
+val dark_pink = Color(0xFFFC466B)
+val dark_blue = Color(0xFF3F5EFB)
