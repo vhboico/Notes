@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -23,15 +24,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.anotaes.R
 import com.example.anotaes.model.Tarefa
-import com.example.anotaes.repositorio.TarefasRepositorio
+import com.example.anotaes.ui.theme.Black
 import com.example.anotaes.ui.theme.ShapesEdit
 import com.example.anotaes.ui.theme.White
 import com.example.anotaes.ui.theme.green_select
 import com.example.anotaes.ui.theme.red_select
 import com.example.anotaes.ui.theme.yellow_select
+import com.example.anotaes.viewmodel.TarefasViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -40,18 +43,19 @@ fun TarefaItem(
     position: Int,
     listaTarefa: MutableList<Tarefa>,
     context: Context,
-    navController: NavController
+    navController: NavController,
+    viewModel: TarefasViewModel = hiltViewModel()
 ) {
 
     val tituloTarefa = listaTarefa[position].title
     val descricaoTarefa = listaTarefa[position].descricao
     val nivelPrioridade = listaTarefa[position].nivel
+    val tarefaConcluida = listaTarefa[position].checkState
 
     val scope = rememberCoroutineScope()
-    val tarefaRepositorio = TarefasRepositorio()
 
     var isCheck by remember {
-        mutableStateOf(false)
+        mutableStateOf(tarefaConcluida)
     }
 
     fun alertDialog() {
@@ -59,9 +63,9 @@ fun TarefaItem(
         alertDialog.setTitle("Deletar")
             .setMessage("Tem certeza que deseja apagar a tarefa?")
             .setPositiveButton("Sim") { _, _ ->
-                tarefaRepositorio.deletarTarefa(tituloTarefa.toString())
+                viewModel.deletarTarefa(tituloTarefa.toString())
 
-                scope.launch(Dispatchers.Main){
+                scope.launch(Dispatchers.Main) {
                     listaTarefa.removeAt(position)
                     navController.navigate("listaTarefas")
                     Toast.makeText(context, "Sucesso ao deletar", Toast.LENGTH_SHORT).show()
@@ -176,22 +180,28 @@ fun TarefaItem(
             }
 
             Checkbox(
-                checked = isCheck,
+                checked = isCheck!!,
                 onCheckedChange = {
                     isCheck = it
 
-                    if(isCheck){
-                        isCheck = true
-                    }else{
-                        isCheck = false
+                    scope.launch(Dispatchers.IO) {
+                        if (isCheck!!) {
+                            viewModel.updateCheck(tituloTarefa!!, true)
+                        } else {
+                            viewModel.updateCheck(tituloTarefa!!, false)
+                        }
                     }
                 },
-                modifier = Modifier.constrainAs(check){
+                modifier = Modifier.constrainAs(check) {
                     start.linkTo(delete.end, 10.dp)
                     top.linkTo(descricao.bottom, 10.dp)
                     bottom.linkTo(parent.bottom, 10.dp)
                     end.linkTo(parent.end, 10.dp)
-                }
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = green_select,
+                    uncheckedColor = Black
+                )
             )
         }
     }

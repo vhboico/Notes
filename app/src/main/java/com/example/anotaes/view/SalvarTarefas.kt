@@ -30,11 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.anotaes.componentes.Botao
 import com.example.anotaes.componentes.CaixaDeTexto
 import com.example.anotaes.constantes.Constantes
-import com.example.anotaes.repositorio.TarefasRepositorio
 import com.example.anotaes.ui.theme.Purple700
 import com.example.anotaes.ui.theme.White
 import com.example.anotaes.ui.theme.green_select
@@ -43,12 +43,16 @@ import com.example.anotaes.ui.theme.red_select
 import com.example.anotaes.ui.theme.red_unselect
 import com.example.anotaes.ui.theme.yellow_select
 import com.example.anotaes.ui.theme.yellow_unselect
+import com.example.anotaes.viewmodel.TarefasViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SalvarTarefas(navController: NavController) {
+fun SalvarTarefas(
+    navController: NavController,
+    viewModel: TarefasViewModel = hiltViewModel()
+) {
 
     var titulo by remember {
         mutableStateOf("")
@@ -77,8 +81,6 @@ fun SalvarTarefas(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current
-
-    val tarefasRepositorio = TarefasRepositorio()
 
     Scaffold(
         topBar = {
@@ -177,59 +179,67 @@ fun SalvarTarefas(navController: NavController) {
                         if (titulo.isEmpty()) {
                             mensagem = false
                         } else if (titulo.isNotEmpty() && descricao.isNotEmpty() && prioridadeBaixa) {
-                            tarefasRepositorio.salvarTarefa(
+                            viewModel.salvarTarefa(
                                 titulo,
                                 descricao,
-                                Constantes.PRIORIDADE_BAIXA
+                                Constantes.PRIORIDADE_BAIXA,
+                                false
                             )
                             mensagem = true
                         } else if (titulo.isNotEmpty() && descricao.isNotEmpty() && prioridadeMedia) {
-                            tarefasRepositorio.salvarTarefa(
+                            viewModel.salvarTarefa(
                                 titulo,
                                 descricao,
-                                Constantes.PRIORIDADE_MEDIA
+                                Constantes.PRIORIDADE_MEDIA,
+                                false
                             )
                             mensagem = true
                         } else if (titulo.isNotEmpty() && descricao.isNotEmpty() && prioridadeAlta) {
-                            tarefasRepositorio.salvarTarefa(
+                            viewModel.salvarTarefa(
                                 titulo,
                                 descricao,
-                                Constantes.PRIORIDADE_ALTA
+                                Constantes.PRIORIDADE_ALTA,
+                                false
                             )
                             mensagem = true
                         } else if (titulo.isNotEmpty() && descricao.isNotEmpty() && semPrioridade) {
-                            tarefasRepositorio.salvarTarefa(
+                            viewModel.salvarTarefa(
                                 titulo,
                                 descricao,
-                                Constantes.SEM_PRIORIDADE
+                                Constantes.SEM_PRIORIDADE,
+                                false
                             )
                             mensagem = true
                         } else if (titulo.isNotEmpty() && prioridadeBaixa) {
-                            tarefasRepositorio.salvarTarefa(
+                            viewModel.salvarTarefa(
                                 titulo,
                                 descricao,
-                                Constantes.PRIORIDADE_BAIXA
+                                Constantes.PRIORIDADE_BAIXA,
+                                false
                             )
                             mensagem = true
                         } else if (titulo.isNotEmpty() && prioridadeMedia) {
-                            tarefasRepositorio.salvarTarefa(
+                            viewModel.salvarTarefa(
                                 titulo,
                                 descricao,
-                                Constantes.PRIORIDADE_MEDIA
+                                Constantes.PRIORIDADE_MEDIA,
+                                false
                             )
                             mensagem = true
                         } else if (titulo.isNotEmpty() && prioridadeAlta) {
-                            tarefasRepositorio.salvarTarefa(
+                            viewModel.salvarTarefa(
                                 titulo,
                                 descricao,
-                                Constantes.PRIORIDADE_ALTA
+                                Constantes.PRIORIDADE_ALTA,
+                                false
                             )
                             mensagem = true
                         } else {
-                            tarefasRepositorio.salvarTarefa(
+                            viewModel.salvarTarefa(
                                 titulo,
                                 descricao,
-                                Constantes.SEM_PRIORIDADE
+                                Constantes.SEM_PRIORIDADE,
+                                false
                             )
                             mensagem = true
                         }

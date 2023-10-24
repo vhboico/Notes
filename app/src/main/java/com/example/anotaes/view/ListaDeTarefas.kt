@@ -15,18 +15,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.anotaes.itemlista.TarefaItem
-import com.example.anotaes.repositorio.TarefasRepositorio
 import com.example.anotaes.ui.theme.Black
 import com.example.anotaes.ui.theme.Purple700
 import com.example.anotaes.ui.theme.White
+import com.example.anotaes.viewmodel.TarefasViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ListaDeTarefas(navController: NavController) {
+fun ListaDeTarefas(
+    navController: NavController,
+    viewModel: TarefasViewModel = hiltViewModel()
 
-    val tarefasRepositorio = TarefasRepositorio()
+) {
+
     val context = LocalContext.current
 
     Scaffold(
@@ -58,14 +62,12 @@ fun ListaDeTarefas(navController: NavController) {
         }
     ) {
 
-        val listaTarefa =
-            tarefasRepositorio.recuperarTarefas().collectAsState(mutableListOf()).value
+        val listaTarefa = viewModel.recuperarTarefas().collectAsState(mutableListOf()).value
 
         LazyColumn {
             itemsIndexed(listaTarefa) { position, _ ->
-                TarefaItem(position = position, listaTarefa = listaTarefa, context = context, navController = navController)
+                TarefaItem(position = position, listaTarefa = listaTarefa, context = context, navController = navController, viewModel)
             }
         }
     }
-
 }
