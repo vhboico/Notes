@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,6 +17,9 @@ class TarefasViewModel @Inject constructor(private val tarefasRepositorio: Taref
 
     private val _todasTarefas = MutableStateFlow<MutableList<Tarefa>>(mutableListOf())
     private val todasTarefas: StateFlow<MutableList<Tarefa>> = _todasTarefas
+
+    private val _nome = MutableStateFlow("")
+    private val nome: StateFlow<String> = _nome
 
     fun salvarTarefa(title: String, descricao: String, nivel: Int, checkState: Boolean){
         viewModelScope.launch {
@@ -42,5 +46,14 @@ class TarefasViewModel @Inject constructor(private val tarefasRepositorio: Taref
         viewModelScope.launch {
             tarefasRepositorio.updateCheck(tarefa, checkState)
         }
+    }
+
+    fun perfilUsuario(): Flow<String>{
+        viewModelScope.launch {
+            tarefasRepositorio.perfilUsuario().collect{
+                _nome.value = it
+            }
+        }
+        return nome
     }
 }

@@ -22,13 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.anotaes.R
 import com.example.anotaes.model.Tarefa
 import com.example.anotaes.ui.theme.Black
+import com.example.anotaes.ui.theme.Shapes
 import com.example.anotaes.ui.theme.ShapesEdit
 import com.example.anotaes.ui.theme.White
 import com.example.anotaes.ui.theme.green_select
@@ -130,7 +133,10 @@ fun TarefaItem(
                 modifier = Modifier.constrainAs(titulo) {
                     start.linkTo(parent.start, 10.dp)
                     top.linkTo(parent.top)
-                }
+                },
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Black
             )
 
             Text(
@@ -138,27 +144,33 @@ fun TarefaItem(
                 modifier = Modifier.constrainAs(descricao) {
                     start.linkTo(parent.start, 10.dp)
                     top.linkTo(titulo.bottom, 10.dp)
-                }
+                },
+                color = Black,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium
             )
             Text(
                 text = txtPrioridade,
                 modifier = Modifier.constrainAs(prioridade) {
                     start.linkTo(parent.start, 10.dp)
-                    top.linkTo(descricao.bottom, 14.dp)
+                    top.linkTo(descricao.bottom, 10.dp)
                     bottom.linkTo(parent.bottom, 10.dp)
-                }
+                },
+                color = Black,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
             )
 
             Card(
                 backgroundColor = color,
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(20.dp)
                     .constrainAs(card) {
                         start.linkTo(prioridade.end, 10.dp)
                         top.linkTo(descricao.bottom, 10.dp)
                         bottom.linkTo(parent.bottom, 10.dp)
                     },
-                shape = ShapesEdit.large
+                shape = Shapes.large
             ) {
 
             }
@@ -167,7 +179,7 @@ fun TarefaItem(
                 alertDialog()
             },
                 modifier = Modifier.constrainAs(delete) {
-                    start.linkTo(card.end, 30.dp)
+                    start.linkTo(parent.start, 250.dp)
                     top.linkTo(descricao.bottom, 10.dp)
                     bottom.linkTo(parent.bottom, 10.dp)
                 }
@@ -193,10 +205,10 @@ fun TarefaItem(
                     }
                 },
                 modifier = Modifier.constrainAs(check) {
-                    start.linkTo(delete.end, 10.dp)
+                    start.linkTo(delete.end)
                     top.linkTo(descricao.bottom, 10.dp)
                     bottom.linkTo(parent.bottom, 10.dp)
-                    end.linkTo(parent.end, 10.dp)
+                    end.linkTo(parent.end)
                 },
                 colors = CheckboxDefaults.colors(
                     checkedColor = green_select,

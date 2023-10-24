@@ -1,6 +1,7 @@
 package com.example.anotaes.datasource
 
 import com.example.anotaes.model.Tarefa
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,9 @@ class DataSource @Inject constructor() {
 
     private val _todasTarefas = MutableStateFlow<MutableList<Tarefa>>(mutableListOf())
     private val todasTarefas: StateFlow<MutableList<Tarefa>> = _todasTarefas
+
+    private val _nome = MutableStateFlow("")
+    private val nome: StateFlow<String> = _nome
 
     fun salvarTarefa(title: String, descricao: String, nivel: Int, checkState: Boolean) {
 
@@ -61,5 +65,19 @@ class DataSource @Inject constructor() {
             }.addOnFailureListener {
 
         }
+    }
+
+    fun perfilUsuario(): StateFlow<String> {
+
+        val usuarioID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        db.collection("users").document(usuarioID).get().addOnCompleteListener {
+            if (it.isSuccessful){
+
+                val nome = it.result.getString("Nome").toString()
+                _nome.value = nome
+            }
+        }
+        return nome
     }
 }

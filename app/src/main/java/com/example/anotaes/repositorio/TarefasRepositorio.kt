@@ -24,4 +24,8 @@ class TarefasRepositorio @Inject constructor(private val dataSource: DataSource)
     fun updateCheck(tarefa: String, checkState: Boolean){
         dataSource.updateCheck(tarefa, checkState)
     }
+
+    fun perfilUsuario(): Flow<String>{
+        return dataSource.perfilUsuario()
+    }
 }

@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
             
             NavHost(navController = navController, startDestination = "login"){
                 composable("login"){
-                    Login(navController)
+                    Login(navController, authViewModel)
                 }
                 composable("listaTarefas"){
                     ListaDeTarefas(navController, viewModel)

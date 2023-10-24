@@ -1,6 +1,7 @@
 package com.example.anotaes.view
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,8 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,19 +41,35 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.anotaes.R
 import com.example.anotaes.componentes.ButtonAuth
+import com.example.anotaes.listener.ListenerAuth
 import com.example.anotaes.ui.theme.Black
 import com.example.anotaes.ui.theme.Purple700
 import com.example.anotaes.ui.theme.ShapesEdit
 import com.example.anotaes.ui.theme.White
 import com.example.anotaes.ui.theme.dark_blue
 import com.example.anotaes.ui.theme.dark_pink
+import com.example.anotaes.viewmodel.AuthViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun Login(navController: NavController) {
+fun Login(
+    navController: NavController,
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
+
+    var usuarioLogado = authViewModel.verificarUsuarioLogado().collectAsState(initial = false).value
+
+    LaunchedEffect(usuarioLogado){
+        if (usuarioLogado){
+            navController.navigate("listaTarefas")
+        } else{
+            usuarioLogado = false
+        }
+    }
 
     Scaffold(
         modifier = Modifier.background(
@@ -85,6 +105,8 @@ fun Login(navController: NavController) {
             var message by remember {
                 mutableStateOf("")
             }
+
+            val context = LocalContext.current
 
             val icon = if (visibilityPassword)
                 painterResource(id = R.drawable.baseline_visibility_24)
@@ -171,7 +193,19 @@ fun Login(navController: NavController) {
                 color = White
             )
 
-            ButtonAuth(onClick = { navController.navigate("listaTarefas") }, text = "Login")
+            ButtonAuth(onClick = {
+                authViewModel.login(email, password, object : ListenerAuth {
+                    override fun onSucess(mensagem: String, tela: String) {
+                        Toast.makeText(context, mensagem, Toast.LENGTH_SHORT).show()
+                        navController.navigate(tela)
+                    }
+
+                    override fun onFailure(erro: String) {
+                        message = erro
+                    }
+
+                })
+            }, text = "Login")
 
             Spacer(modifier = Modifier.padding(20.dp))
 
@@ -184,7 +218,8 @@ fun Login(navController: NavController) {
                     text = "Não tem conta? Cadastre-se agora",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = White)
+                    color = White
+                )
             }
 
             Spacer(modifier = Modifier.padding(bottom = 20.dp))
